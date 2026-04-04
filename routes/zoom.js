@@ -19,7 +19,7 @@ router.get('/connect', (req, res) => {
 
   const redirectUri = `${BASE_URL}/api/zoom/callback`;
 
-  const zoomOAuthUrl = `https://zoom.us/oauth/authorize?response_type=code&client_id=${process.env.ZOOM_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${token}&prompt=login&scope=cloud_recording:read:list_user_recordings`;
+  const zoomOAuthUrl = `https://zoom.us/oauth/authorize?response_type=code&client_id=${process.env.ZOOM_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${token}&prompt=consent&scope=cloud_recording:read:list_user_recordings`;
 
   console.log('[Zoom Connect] OAuth URL:', zoomOAuthUrl);
   res.redirect(zoomOAuthUrl);
