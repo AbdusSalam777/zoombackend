@@ -6,18 +6,22 @@ const jwt = require('jsonwebtoken');
 const qs = require('querystring');
 
 // Step 1: Redirect teacher to Zoom OAuth
+const BASE_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://zoombackend-32ri.onrender.com' // your Render URL
+    : 'http://localhost:5000';
+
 router.get('/connect', (req, res) => {
-  const { token } = req.query; // JWT token for identifying teacher
+  const { token } = req.query;
   if (!token) return res.status(400).send('Missing token');
 
-  const redirectUri = `${process.env.BASE_URL}/api/zoom/callback`;
+  const redirectUri = `${BASE_URL}/api/zoom/callback`;
 
-  // Zoom OAuth URL with prompt=login to avoid auto-login with wrong account
- const zoomOAuthUrl = `https://zoom.us/oauth/authorize?response_type=code&client_id=${process.env.ZOOM_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${token}&prompt=login&scope=cloud_recording:read:list_user_recordings`;
+  const zoomOAuthUrl = `https://zoom.us/oauth/authorize?response_type=code&client_id=${process.env.ZOOM_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${token}&prompt=login&scope=cloud_recording:read:list_user_recordings`;
 
+  console.log('Zoom OAuth URL:', zoomOAuthUrl); // log for debugging
   res.redirect(zoomOAuthUrl);
 });
-
 // Step 2: OAuth callback - Zoom redirects here after auth
 router.get('/callback', async (req, res) => {
   const { code, state } = req.query;
